@@ -14,11 +14,9 @@ def main(): #server logic
             # The \r\n\r\n at the end of the response is required to indicate the end of the HTTP headers according to the HTTP protocol.
             response = "HTTP/1.1 200 OK\r\n\r\n" 
             
-            # statement is used to ensure that the socket is properly cleaned up after it is used. 
-            with server_socket:
-                server_socket.send(response.encode())    
-                # the server_socket.send function is called to send the response to the client. 
-                # The response.encode() function is used to convert the string into bytes, as the send function requires data to be in bytes.
+            server_socket.send(response.encode())    
+            # the server_socket.send function is called to send the response to the client. 
+            # The response.encode() function is used to convert the string into bytes, as the send function requires data to be in bytes.
         except Exception as e:
             print(f"An error occurred: {e}")
 
