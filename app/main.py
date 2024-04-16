@@ -7,7 +7,7 @@ def main(): #server logic
     
     while True: #loop to keep server running and accepting new connections indefinitely
         try:
-            server_socket, _ = server_socket.accept() # function is called again 
+            server_socket, client_address = server_socket.accept() # function is called again 
             # # returned value is a tuple with two elements: the first is the socket object and the second is the address of the client
             
             # variable is a string that represents a basic HTTP response indicating a successful request (200 OK). 
