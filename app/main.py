@@ -26,9 +26,8 @@ def main(): # server logic
                 _, _, random_string = path_parts
                 print(f'Random string: {random_string}')
             else:
-                random_string = ''
-                print('No random string present')
-
+               http_response = "HTTP/1.1 404 Not Found\r\n\r\n"  
+   
             # Create a reponse body
             response_body = random_string
             
@@ -40,13 +39,7 @@ def main(): # server logic
                 f'\r\n'
                 f'{response_body}'
             )
-            # Conditional
-#            if path == '/':
-                 # The \r\n\r\n at the end of the response is required to indicate the end of the HTTP headers according to the HTTP protocol.
- #               http_response = "HTTP/1.1 200 OK\r\n\r\n"
-  #          else:
-   #             http_response = "HTTP/1.1 404 Not Found\r\n\r\n"  
-            # The response.encode() function is used to convert the string into bytes, as the send function requires data to be in bytes.
+   
             client_conn.send(response.encode())    
            
             # Close the connection socket
