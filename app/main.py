@@ -19,10 +19,15 @@ def main(): # server logic
             start_line = request_lines[0]
             _, path, _ = start_line.split(' ')
             print(f"Requested path: {path}")
-
+   
             # Extract a random string from the path
-            _, _, random_string = path.split('/')
-            print(f'Random string : {random_string}')
+            path_parts = path.split('/')
+            if len(path_parts) >= 3:
+                _, _, random_string = path_parts
+                print(f'Random string: {random_string}')
+            else:
+                random_string = ''
+                print('No random string present')
 
             # Create a reponse body
             response_body = random_string
