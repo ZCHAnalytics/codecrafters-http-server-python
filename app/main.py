@@ -16,7 +16,7 @@ def main(): # server logic
             
             # Extract path from the request
             request_lines = client_request_data.split('\r\n')
-            start_line = request_lines[]
+            start_line = request_lines[0]
             method, path, _ = start_line.split(' ')
             print(f"Requested path: {path}")
 
