@@ -18,11 +18,11 @@ def main():
             start_line = request_lines[0]
             _, path, _ = start_line.split(' ')
             print(f"Requested path: {path}")
-   
-            # Extract a random string from the path
-            path_parts = path.split('/')
-            if len(path_parts) >= 3:
-                _, _, random_string = path_parts
+
+            # Check if the path starts with '/echo/'
+            if path.startswith('/echo/'):
+                # Extract the random string from the path
+                _, _, random_string = path.split('/')
                 print(f'Random string: {random_string}')
 
                 # Create a response body
@@ -37,7 +37,7 @@ def main():
                     f'{response_body}'
                 )
             else:
-                # Respond with 404 Not Found for invalid paths
+                # Respond with 404 Not Found for other paths
                 response = "HTTP/1.1 404 Not Found\r\n\r\n"
    
             # Send the response
