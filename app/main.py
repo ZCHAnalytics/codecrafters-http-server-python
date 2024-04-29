@@ -4,7 +4,7 @@ def main(): #server logic
     print("Logs from your program will appear here!")
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True) #function to create a server socket, listen on localhost, port 4221
     server_socket.accept() # function to wait for client to connect to server before proceeding 
-"""
+
     while True: #loop to keep server running and accepting new connections indefinitely
         try:
             server_socket, client_address = server_socket.accept() # function is called again 
@@ -19,6 +19,6 @@ def main(): #server logic
             # The response.encode() function is used to convert the string into bytes, as the send function requires data to be in bytes.
         except Exception as e:
             print(f"An error occurred: {e}")
-"""
+
 if __name__ == "__main__":
     main()
