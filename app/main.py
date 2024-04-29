@@ -42,7 +42,7 @@ def main(): # server logic
   #          else:
    #             http_response = "HTTP/1.1 404 Not Found\r\n\r\n"  
             # The response.encode() function is used to convert the string into bytes, as the send function requires data to be in bytes.
-            client_conn.send(http_response.encode())    
+            client_conn.send(response.encode())    
            
             # Close the connection socket
             client_conn.close()
