@@ -6,9 +6,9 @@ def main(): # server logic
 
     while True: #loop to keep server running and accepting new connections indefinitely
         try:
-            client_conn, client_add = serv_socket.accept() # function is called again 
+            client_conn, client_addr = serv_socket.accept() # function is called again 
             # # returned value is a tuple with two elements: the first is the socket object and the second is the address of the client
-            print(f"Connection from {client_add}")
+            print(f"Connection from {client_addr}")
 
             # Read data from the connection
             client_request_data = client_conn.recv(1024).decode()
@@ -17,16 +17,30 @@ def main(): # server logic
             # Extract path from the request
             request_lines = client_request_data.split('\r\n')
             start_line = request_lines[0]
-            method, path, _ = start_line.split(' ')
+            _, path, _ = start_line.split(' ')
             print(f"Requested path: {path}")
 
-            # Conditional
-            if path == '/':
-                # The \r\n\r\n at the end of the response is required to indicate the end of the HTTP headers according to the HTTP protocol.
-                http_response = "HTTP/1.1 200 OK\r\n\r\n"
-            else:
-                http_response = "HTTP/1.1 404 Not Found\r\n\r\n" 
+            # Extract a random string from the path
+            _, _, random_string = path.split('/')
+            print(f'Random string : {random_string}')
+
+            # Create a reponse body
+            response_body = random_string
             
+            # Construct the response
+            response = (
+                f'HTTP/1.1 200 OK\r\n'
+                f'Content-Type: text/plain\r\n'
+                f'Content-Length: {len(response_body)}\r\n'
+                f'\r\n'
+                f'{response_body}'
+            )
+            # Conditional
+#            if path == '/':
+                 # The \r\n\r\n at the end of the response is required to indicate the end of the HTTP headers according to the HTTP protocol.
+ #               http_response = "HTTP/1.1 200 OK\r\n\r\n"
+  #          else:
+   #             http_response = "HTTP/1.1 404 Not Found\r\n\r\n"  
             # The response.encode() function is used to convert the string into bytes, as the send function requires data to be in bytes.
             client_conn.send(http_response.encode())    
            
