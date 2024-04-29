@@ -1,13 +1,12 @@
-import socket # low-level networking interface
+import socket
 
-def main(): # server logic
+def main():
     print("Logs from your program will appear here!")
-    serv_socket = socket.create_server(("localhost", 4221), reuse_port=True) #function to create a server socket, listen on localhost, port 4221
+    serv_socket = socket.create_server(("localhost", 4221), reuse_port=True)
 
-    while True: #loop to keep server running and accepting new connections indefinitely
+    while True:
         try:
-            client_conn, client_addr = serv_socket.accept() # function is called again 
-            # # returned value is a tuple with two elements: the first is the socket object and the second is the address of the client
+            client_conn, client_addr = serv_socket.accept()
             print(f"Connection from {client_addr}")
 
             # Read data from the connection
@@ -25,26 +24,28 @@ def main(): # server logic
             if len(path_parts) >= 3:
                 _, _, random_string = path_parts
                 print(f'Random string: {random_string}')
+
+                # Create a response body
+                response_body = random_string
+
+                # Construct the response
+                response = (
+                    f'HTTP/1.1 200 OK\r\n'
+                    f'Content-Type: text/plain\r\n'
+                    f'Content-Length: {len(response_body)}\r\n'
+                    f'\r\n'
+                    f'{response_body}'
+                )
             else:
-               http_response = "HTTP/1.1 404 Not Found\r\n\r\n"  
+                # Respond with 404 Not Found for invalid paths
+                response = "HTTP/1.1 404 Not Found\r\n\r\n"
    
-            # Create a reponse body
-            response_body = random_string
-            
-            # Construct the response
-            response = (
-                f'HTTP/1.1 200 OK\r\n'
-                f'Content-Type: text/plain\r\n'
-                f'Content-Length: {len(response_body)}\r\n'
-                f'\r\n'
-                f'{response_body}'
-            )
-   
+            # Send the response
             client_conn.send(response.encode())    
            
             # Close the connection socket
             client_conn.close()
-            
+
         except Exception as e:
             print(f"An error occurred: {e}")
 
