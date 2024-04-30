@@ -11,10 +11,11 @@ def main():
             # Read data from the connection        
             client_request_data = client_conn.recv(1024).decode()
             print(f"Received request: {client_request_data}")
+
             # Extract path from the request
             request_lines = client_request_data.split("\r\n")
             start_line = request_lines[0]
-            _, path, _ = start_line.split("")
+            _, path, _ = start_line.split(" ")
             print(f"The extracted path is: {path}")
             random_string = ""
 
