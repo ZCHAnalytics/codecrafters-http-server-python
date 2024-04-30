@@ -16,6 +16,8 @@ def main():
             # Extract path from the request
             client_request_lines = read_client_data.split('\r\n')
             start_line = client_request_lines[0]
+            print(f"The start_line is: {start_line}")
+
             _, path, _ = start_line.split(' ')
             print(f"The requested path is: {path}")
 
