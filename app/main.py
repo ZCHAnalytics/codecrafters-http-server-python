@@ -8,44 +8,44 @@ def main():
         try:
             client_conn, client_addr = my_serv_socket.accept()
             print(f"The connection from {client_addr}")
-
-            # Read data from the connection
-            read_client_data = client_conn.recv(1024).decode()
-            print(f"The received request: {read_client_data}")
-            
+            # Read data from the connection        
+            client_request_data = client_conn.recv(1024).decode()
+            print(f"Received request: {client_request_data}")
             # Extract path from the request
-            client_request_lines = read_client_data.split('\r\n')
-            start_line = client_request_lines[0]
-            print(f"The start_line is: {start_line}")
+            request_lines = client_request_data.split("\r\n")
+            start_line = request_lines[0]
+            _, path, _ = start_line.split("")
+            print(f"The extracted path is: {path}")
+            random_string = ""
 
-            _, path, _ = start_line.split(' ')
-            print(f"The requested path is: {path}")
-
-            # Check if the path starts with '/'
-            if path.startswith('/'):
+            # Conditional
+            if path == ("/", "*"):
                 # Extract the random string from the path
                 _, _, random_string = path.split('/')
-                print(f'The random string: {random_string}')
+                print(f'The random string in the extracted path is: {random_string}')
 
                 # Create a response body
                 print("this is the outcome of response_body=random_string")
                 response_body = random_string
 
                 # Construct the response
-                response = (
+                http_response = (
                     f'HTTP/1.1 200 OK\r\n'
                     f'Content-Type: text/plain\r\n'
                     f'Content-Length: {len(response_body)}\r\n'
                     f'\r\n'
                     f'{response_body}'
                 )
+            elif path == "/":
+                # The \r\n\r\n at the end of the response is required to indicate the end of the HTTP headers according to the HTTP protocol.
+                http_response = "HTTP/1.1 200 OK\r\n\r\n"
             else:
                 # Respond with 404 Not Found for other paths
                 print("this is the outcome of else operation")
                 response = "HTTP/1.1 404 Not Found\r\n\r\n"
-   
+
             # Send the response
-            client_conn.send(response.encode())    
+            client_conn.send(http_response.encode())    
             # Close the connection socket
             client_conn.close()
 
