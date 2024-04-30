@@ -14,15 +14,16 @@ def main():
             client_request_data = client_connection.recv(1024).decode()
             print(f'Decoded request received from client: {client_request_data}')
 
-            # Extract path from the request
-            _, _, user_agent = client_request_data.split(" ")
-            print(f'Extracted User Agent from the request: {user_agent}')
+            # Extract third line from the request
+            http_request_lines = client_request_data.split("\r\n")
+            print(f'Extracted User Agent from the request: {http_request_lines}')
 
+            _, _, user_agent_line = http_request_lines.split(" ")
+            print('    extracting the last line of http request')
             print('...  ... ... Starting "If" block\n')
-            if  user_agent == '*curl*':
-                curl_string = user_agent.split(" ")
+            if  user_agent_line:
                 print(f'           Preparing curl http response')
-                http_response = (f'HTTP/1.1 200 OK\r\nContent_type: text/plain\r\nContent-Length: len({curl_string})\r\n\r\n{curl_string}')
+                http_response = (f'HTTP/1.1 200 OK\r\nContent_type: text/plain\r\nContent-Length: len({user_agent_line})\r\n\r\n{user_agent_line}')
             else:
                 print(f'Requsted path not found, returning 404 error')
                 http_response = 'HTTP/1.1 404 Not Found\r\n\r\n'
