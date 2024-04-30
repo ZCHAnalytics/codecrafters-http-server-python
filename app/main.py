@@ -5,46 +5,45 @@ def main():
     print('...  Starting the "while True" block...\n')
     while True:
         client_connection, client_address = my_serv_socket.accept()
-        print(f'Accepting the connection from client at this address {client_address}\n')
+        print(f'Accepting the connection from client at this address {client_address}\n') ##
 
-        print('...  ... Starting the "try" block inside the "while" block\n')    
+        print('...  ... Starting the "try" block inside the "while" block\n')    ##
         try:
             # Read data from the connection
             client_request_data = client_connection.recv(1024).decode()
-            print(f'Decoded request received from client: {client_request_data}')
-            
-            # Extract path from the request
-            _, path, _ = client_request_data.split(" ", 2)
-            print(f'Extracted path from the request: {path}')
+            print(f'Decoded request received from client: {client_request_data}\n\n') ##
 
             # Split http request into separate lines 
-            print(f'Let us splitting http request lines into separate lines!')
+            print(f'Let us splitting http request lines into separate lines!\n')
             request_lines = client_request_data.split("\r\n")
-            print(f'    Http request lines split as: {request_lines}')
+            print(f'    Http request lines split as: {request_lines}\n')      
+
+            # Extract path from the request
+            _, path, _ = client_request_data.split(" ", 2) 
+            print(f'Extracted path from the request: {path}\n')
             
-            # Extract user-agent line
-            print('    Let us extract the User-Agent line from the http request')
-            user_agent_line = request_lines[2] if len(request_lines) >= 3 else None
-            print('      Hurray! There is a user agent line!')
-            
+
             print('...  ... ... Starting "If" block')
-            if path.startswith("/echo/"):
+            if path == '/':
+                print(f'No specific path provided, so returning the default respose')
+                http_response = "HTTP/1.1 200 OK\r\n\r\n"
+            elif 'echo' in path: 
                 random_string = path.split("/")[-1]
                 print(f'Extracted random string from path: {random_string}')
                 http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
-            elif path == "/":
-                print(f'No specific path provided, so returning the default respose')
-                http_response = "HTTP/1.1 200 OK\r\n\r\n"
-            elif user_agent_line:
-                content_with_version = user_agent_line.split(": ")[1]
+            elif 'user-agent' in path:
+                content = path.split(": ")[1]
+                print(f'Value of User-Agent extracted and is: {content}\n')
                 # Exclude the version number from the User-Agent value
-                content_without_version = content_with_version.split('/')[0]
-
+                #content_lengthhout_version = content_with_version.split('/')[0]
                 # Calculate the length of the extracted User-Agent substring
-                content_length = len(content_without_version.encode('utf-8'))   
-                print(f'Value of User-Agent extracted and is: {content_with_version}\n')
-                print(f'Value of User-Agent in length is: {len(content_without_version)}\n')
-                http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(content_without_version)}\r\n\r\n{content_with_version}'
+                #content_length = len(content_without_version.encode('utf-8'))   
+                # print(f'Value of User-Agent extracted and is: {content_with_version}\n')
+                #print(f'Value of User-Agent in length is: {len(content_without_version)}\n')
+                http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(content)}\r\n\r\n{content}'
+            else:
+                print(f'Requsted path not found, returning 404 error')
+                http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
             else:
                 print("User-Agent header not found in the request\n")
 
