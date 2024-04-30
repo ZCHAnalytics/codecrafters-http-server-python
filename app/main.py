@@ -15,27 +15,28 @@ def main():
 
             # Split request into lines 
             print(f'Splitting http request lines into lines')
-            http_request_lines = client_request_data.split("\r\n")
-            print(f'    Http request lines split as: {http_request_lines}')
+            request_lines = client_request_data.split("\r\n")
+            print(f'    Http request lines split as: {request_lines}')
             
             # Extract user-agent line
             print('    extracting the last line of http request')
-            user_agent_line = http_request_lines[2].split(" ")
+            user_agent_line = request_lines[2] if len(request_lines) >= 3 else None
             print('     last line with user agent extracted')
-
-            # Extact value in user_agent_line after semicolon
-            print('     Extracting value of User-Agent')
-            user_agent_value = user_agent_line[-1]
-            print(f'     Value of User-Agent extracted and is: {user_agent_value}')
-
-            print('...  ... ... Starting "If" block\n')
-            if  user_agent_value:
-                print(f'           Preparing curl http response')
-                http_response = (f'HTTP/1.1 200 OK\r\nContent_type: text/plain\r\nContent-Length: len({user_agent_value})\r\n\r\n{user_agent_value}')
+           
+            print('...  ... ... Starting "If" block\n') 
+            if user_agent_line:
+                print(f'Value of User-Agent extracted and is: {user_agent_line.split(": ")[1]}\n')
             else:
-                print(f'Requsted path not found, returning 404 error')
-                http_response = 'HTTP/1.1 404 Not Found\r\n\r\n'
+                print("User-Agent header not found in the request\n")
 
+            http_response = (f'HTTP/1.1 200 OK\r\n\r\n')
+            
+            # Extracting value of User-Agent and including it in the response
+            print('     Extracting value of User-Agent\n')
+            user_agent_value = user_agent_line.split(": ")[1] if user_agent_line else "Unknown"
+
+            http_response += f"Content-Length: {len(user_agent_value)}\r\n\r\n{user_agent_value}"
+                     
             # Send the response back
             print('Sending the response back and putting the kettle on')
             client_connection.send(http_response.encode())
