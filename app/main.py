@@ -1,8 +1,9 @@
 import socket
 import threading
 import os
+import sys
 
-def parsing_requests(client_connection, directory):
+def parsing_requests(client_connection):
     try:
         request_data = client_connection.recv(1024).decode()
         request_lines = request_data.split("\r\n")
@@ -28,14 +29,12 @@ def parsing_requests(client_connection, directory):
             print(f"Value of User-Agent extracted and is: {agent}\n")
             http_response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(agent)}\r\n\r\n{agent}"
         elif path.startswith("/files/"):
-            # extract file name
-            file_name = path.split("/")[-1]
-            file_path = os.path.join(directory, file_name)
-            if os.path.exists(file_path) and os.path.isfile(file_path):
-                print(f' the content of the file:{file_name}')
-                with open(file_path, "rb") as file:
+            file_name = path[7:]
+            file_path = f"{sys.argv[2]}/{file_name}"
+            if os.path.exists(file_path):
+                with open(file_path, "rb").read() as file:
                     file_content = file.read()
-                http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n"
+                http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent: file_content\r\n\r\n"
                 client_connection.sendall(http_response.encode() + file_content)
         else:
             print(f"Requsted path not found, returning 404 error")
@@ -51,18 +50,12 @@ def parsing_requests(client_connection, directory):
         print("Closing the client connection and going to bed")
         client_connection.close()
 
-def main(directory):
+def main():
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     while True:
         client_connection, client_address = server_socket.accept()
-        client_thread = threading.Thread(target=parsing_requests, args=(client_connection, directory))
+        client_thread = threading.Thread(target=parsing_requests, args=(client_connection,))
         client_thread.start()
         
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(description="My HTTP Server")
-    parser.add_argument("--directory", required=True, help="Directory with files")
-    args = parser.parse_args()
-
-    main(args.directory)
+    main()
