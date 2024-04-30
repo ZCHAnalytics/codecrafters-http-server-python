@@ -2,11 +2,10 @@ import socket
 
 def main():
     my_serv_socket = socket.create_server(("localhost", 4221), reuse_port=True)
-
     print('...  Starting the "while True" block...\n')
     while True:
         client_connection, client_address = my_serv_socket.accept()
-        print(f'Accepting the connection from client at this address {client_address}')
+        print(f'Accepting the connection from client at this address {client_address}\n')
 
         print('...  ... Starting the "try" block inside the "while" block\n')    
         try:
@@ -16,9 +15,9 @@ def main():
 
             # Extract third line from the request
             http_request_lines = client_request_data.split("\r\n")
-            print(f'Extracted User Agent from the request: {http_request_lines}')
+            print(f'Extracting User Agent from the http request lines: {http_request_lines}')
 
-            _, _, user_agent_line = http_request_lines.split(" ")
+            _, user_agent_line = http_request_lines[-1].split(" ")
             print('    extracting the last line of http request')
             print('...  ... ... Starting "If" block\n')
             if  user_agent_line:
