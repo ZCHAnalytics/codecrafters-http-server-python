@@ -36,6 +36,10 @@ def parsing_requests(client_connection):
                     file_content = file.read()
                 http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content.decode()}"
                 client_connection.sendall(http_response.encode())
+            else:
+                print(f"Requested file not found: {file_name}")
+                http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
+                client_connection.sendall(http_response.encode())
         else:
             print(f"Requsted path not found, returning 404 error")
             http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
