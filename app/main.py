@@ -38,9 +38,8 @@ def main():
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     while True:
         client_connection, client_address = server_socket.accept()
-        client_thread = threading.Thread(target=parsing_requests, args=(client_connection))
+        client_thread = threading.Thread(target=parsing_requests, args=(client_connection,))
         client_thread.start()
         
-
 if __name__ == "__main__":
     main()
