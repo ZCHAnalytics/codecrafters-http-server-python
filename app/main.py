@@ -22,16 +22,21 @@ def main():
             print('    Let us extract the User-Agent line from the http request')
             user_agent_line = request_lines[2] if len(request_lines) >= 3 else None
             print('      Hurray! There is a user agent line!')
-           
+        
             print('...  ... ... Starting the "If" block inside the "Try" block\n') 
             if user_agent_line:
-                content = user_agent_line.split(": ")[1]
-                print(f'Value of User-Agent extracted and is: {content}\n')
-                print(f'Value of User-Agent in length is: {len(content)}\n')
+                content_with_version = user_agent_line.split(": ")[1]
+                # Exclude the version number from the User-Agent value
+                content_without_version = content_with_version.split('/')[0]
+
+                # Calculate the length of the extracted User-Agent substring
+                content_length = len(content_without_version.encode('utf-8'))   
+                print(f'Value of User-Agent extracted and is: {content_with_version}\n')
+                print(f'Value of User-Agent in length is: {len(content_without_version)}\n')
             else:
                 print("User-Agent header not found in the request\n")
 
-            http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length:{len(content)}\r\n\r\n{content}'.encode()
+            http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(content_without_version)}\r\n\r\n{content_with_version}'
             # Send the response back
             print('Sending the response back and putting the kettle on')
             client_connection.send(http_response.encode('utf-8'))
