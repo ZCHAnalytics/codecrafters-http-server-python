@@ -21,9 +21,10 @@ def main():
             random_string = ""
 
             # Conditional
-            if path.startswith("/") and path.count("/") == 2:
+            # Conditional
+            if path.startswith("/echo/"):
                 # Extract the random string from the path
-                _, random_string = path.split('/')
+                _, _, random_string = path.partition('/echo/')
                 print(f'The random string in the extracted path is: {random_string}')
 
                 # Create a response body
