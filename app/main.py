@@ -8,14 +8,12 @@ def main():
             request_data = client_connection.recv(1024).decode()
             path = request_data.split("\r\n")[0].split(" ")[1]
             print(path)
-            print (path[6:])
-            
             agent = request_data.split("\r\n")[2].split(": ")[1]
             print(f'{agent}\n')
             
             print('Starting "If" block')
             if path.startswith("/echo/"):
-                random_string = path[6:]
+                _, _, random_string = path.partition('/echo/')
                 print(f'Extracted random string from path: {random_string}')
                 http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
             elif path == "/":
