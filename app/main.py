@@ -5,16 +5,16 @@ def main():
     my_serv_socket = socket.create_server(("localhost", 4221), reuse_port=True)
 
     while True:
-        client_conn, client_addr = my_serv_socket.accept()
-        print(f"The connection from {client_addr}")
+        client_connection, client_address = my_serv_socket.accept()
+        print(f"The connection from {client_address}")
 
         try:
             # Read data from the connection        
-            client_request_data = client_conn.recv(1024).decode()
+            client_request_data = client_connection.recv(1024).decode()
             print(f"Received request: {client_request_data}")
 
             # Extract path from the request
-            method, path, _ = client_request_data.split(" ", 2)
+            _, path, _ = client_request_data.split(" ", 2)
             print(f"The extracted path is: {path}")
 
             # Conditional
@@ -29,14 +29,14 @@ def main():
                 http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
 
             # Send the response
-            client_conn.send(http_response.encode())
+            client_connection.send(http_response.encode())
 
         except Exception as e:
             print(f"An error occurred: {e}")
 
         finally:
             # Close the connection socket
-            client_conn.close()
+            client_connection.close()
 
     my_serv_socket.close()
 
