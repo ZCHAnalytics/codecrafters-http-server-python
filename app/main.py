@@ -7,14 +7,16 @@ def parsing_requests(client_connection):
         request_lines = request_data.split("\r\n")
         path = request_lines[0].split(" ")[1]
         print(path)
+        try:
+            if len(request_lines) >= 3:
+                agent = request_lines[2].split(": ")[1]
+                print(agent)
+            else:
+                print("Request data doesn't contain enough lines")
+        except Exception as e:
+            print(f"exception: {e}")
 
-        if len(request_lines) >= 3:
-            agent = request_lines[2].split(": ")[1]
-            print(f'{agent}\n')
-        else:
-            print("Request data doesn't contain enough lines")
-              
-        print('Starting "If" block')
+        print('\nStarting "If" block')
         if path.startswith("/echo/"):
             _, _, random_string = path.partition('/echo/')
             print(f'Extracted random string from path: {random_string}')
