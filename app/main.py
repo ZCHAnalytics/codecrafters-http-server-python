@@ -21,7 +21,7 @@ def main():
                 print(f'If the path starts with "echo" than the random string in the extracted path is: {random_string}')
                 http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
             elif path == "/":
-                print(f'If the path does not starts with "echo" than the random string in the extracted path is: {random_string}')
+                print(f'If the path does not "echo"')
                 http_response = "HTTP/1.1 200 OK\r\n\r\n"
             else:
                 print(f'Submitting the resignation form')
