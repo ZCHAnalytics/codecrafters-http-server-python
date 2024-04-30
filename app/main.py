@@ -13,16 +13,17 @@ def main():
             print(f"Received request: {client_request_data}")
 
             # Extract path from the request
-            request_lines = client_request_data.split("\r\n")
-            start_line = request_lines[0]
-            _, path, _ = start_line.split(" ")
+            http_request_data = client_request_data.split("\r\n")
+            first_line = http_request_data[0]
+            method, path, version = first_line.split(" ")
+            
             print(f"The extracted path is: {path}")
             random_string = ""
 
             # Conditional
-            if path == ("/", "*"):
+            if path.startswith("/") and path.count("/") == 2:
                 # Extract the random string from the path
-                _, _, random_string = path.split('/')
+                _, random_string = path.split('/')
                 print(f'The random string in the extracted path is: {random_string}')
 
                 # Create a response body
@@ -43,7 +44,7 @@ def main():
             else:
                 # Respond with 404 Not Found for other paths
                 print("this is the outcome of else operation")
-                response = "HTTP/1.1 404 Not Found\r\n\r\n"
+                http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
 
             # Send the response
             client_conn.send(http_response.encode())    
