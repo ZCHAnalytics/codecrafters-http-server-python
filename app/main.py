@@ -31,11 +31,11 @@ def parsing_requests(client_connection):
         elif path.startswith("/files/"):
             file_name = path[7:]
             file_path = f"{sys.argv[2]}/{file_name}"
-            if os.path.exists(file_path):
-                with open(file_path, "rb").read() as file:
+            if os.path.exists(file_path) and os.path.isfile(file_path):
+                with open(file_path, "rb") as file:
                     file_content = file.read()
-                http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent: file_content\r\n\r\n"
-                client_connection.sendall(http_response.encode() + file_content)
+                http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n{file_content.decode()}"
+                client_connection.sendall(http_response.encode())
         else:
             print(f"Requsted path not found, returning 404 error")
             http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
@@ -46,7 +46,6 @@ def parsing_requests(client_connection):
         client_connection.sendall(http_response.encode())
 
     finally:
-        # Close the connection socket
         print("Closing the client connection and going to bed")
         client_connection.close()
 
