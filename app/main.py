@@ -5,14 +5,12 @@ def main():
     while True:
         client_connection, client_address = my_serv_socket.accept()
         try:
-            client_request_data = client_connection.recv(1024).decode()
-            print(f'Decoded request received from client: {client_request_data}\n\n') ##
-
+            request_data = client_connection.recv(1024).decode()
             # Extract the path from the request
-            path = client_request_data.split('\r\n')[0].split(" ")[1]
+            path = request_data.split("\r\n")[0].split(" ")[1]
             print(f'{path}\n')
             
-            agent = client_request_data.split('\r\n')[2].split(": ")[1]
+            agent = request_data.split("\r\n")[2].split(": ")[1]
             print(f'{agent}\n')
             
             print('Starting "If" block')
@@ -31,8 +29,7 @@ def main():
                 http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
 
             # Send the response back
-            print('Sending the response back and putting the kettle on')
-            client_connection.send(http_response.encode())
+            client_connection.sendall(http_response.encode())
 
         except Exception as e:
             print(f'Throwing my hands in the air - an error occurred: {e}')
