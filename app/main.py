@@ -19,7 +19,7 @@ def main():
             http_request_lines = client_request_data.split("\r\n")
             print(f'Extracting User Agent from the http request lines: {http_request_lines}')
 
-            user_agent_line = http_request_lines[2]
+            user_agent_line = http_request_lines[2].split(" ")
             print('    extracting the last line of http request')
             print('...  ... ... Starting "If" block\n')
             if  user_agent_line:
