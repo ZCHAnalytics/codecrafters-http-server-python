@@ -29,7 +29,7 @@ def main():
             else:
                 print("User-Agent header not found in the request\n")
 
-            http_response = (f'HTTP/1.1 200 OK\r\n\r\n')
+            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n')
             
             # Extracting value of User-Agent and including it in the response
             print('     Extracting value of User-Agent\n')
