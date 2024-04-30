@@ -4,11 +4,16 @@ import threading
 def parsing_requests(client_connection):
     try:
         request_data = client_connection.recv(1024).decode()
-        path = request_data.split("\r\n")[0].split(" ")[1]
+        request_lines = request_data.split("\r\n")
+        path = request_lines[0].split(" ")[1]
         print(path)
-        agent = request_data.split("\r\n")[2].split(": ")[1]
-        print(f'{agent}\n')
-            
+
+        if len(request_lines) >= 3:
+            agent = request_lines[2].split(": ")[1]
+            print(f'{agent}\n')
+        else:
+            print("Request data doesn't contain enough lines")
+              
         print('Starting "If" block')
         if path.startswith("/echo/"):
             _, _, random_string = path.partition('/echo/')
