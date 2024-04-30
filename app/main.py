@@ -13,26 +13,26 @@ def main():
             client_request_data = client_connection.recv(1024).decode()
             print(f'Decoded request received from client: {client_request_data}')
 
-            # Split request into lines 
-            print(f'Splitting http request lines into lines')
+            # Split http request into separate lines 
+            print(f'Let us splitting http request lines into separate lines!')
             request_lines = client_request_data.split("\r\n")
             print(f'    Http request lines split as: {request_lines}')
             
             # Extract user-agent line
-            print('    extracting the last line of http request')
-            full_content = request_lines[2] if len(request_lines) >= 3 else None
-            print('     last line with user agent extracted')
+            print('    Let us extract the User-Agent line from the http request')
+            user_agent_line = request_lines[2] if len(request_lines) >= 3 else None
+            print('      Hurray! There is a user agent line!')
            
-            print('...  ... ... Starting "If" block\n') 
-            if full_content:
-                content_value = full_content.split(": ")[1]
-                print(f'Value of User-Agent extracted and is: {content_value}\n')
-                content_value_length = len(content_value)
-                print(f'Value of User-Agent in length is: {content_value_length}\n')
+            print('...  ... ... Starting the "If" block inside the "Try" block\n') 
+            if user_agent_line:
+                content = user_agent_line.split(": ")[1]
+                print(f'Value of User-Agent extracted and is: {content}\n')
+                content_length = len(content.encode('utf-8'))
+                print(f'Value of User-Agent in length is: {content_length}\n')
             else:
                 print("User-Agent header not found in the request\n")
 
-            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_value_length}\r\n\r\n{content_value}')
+            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}')
             # Send the response back
             print('Sending the response back and putting the kettle on')
             client_connection.send(http_response.encode())
