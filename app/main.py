@@ -27,12 +27,12 @@ def main():
             if user_agent_line:
                 content = user_agent_line.split(": ")[1]
                 print(f'Value of User-Agent extracted and is: {content}\n')
-                content_length = len(content.encode('utf-8'))
+                content_length = len(content)
                 print(f'Value of User-Agent in length is: {content_length}\n')
             else:
                 print("User-Agent header not found in the request\n")
 
-            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}')
+            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}').encode('utf-8')
             # Send the response back
             print('Sending the response back and putting the kettle on')
             client_connection.send(http_response.encode())
