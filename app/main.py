@@ -39,13 +39,12 @@ def parsing_requests(client_connection, directory):
         else:
             print(f"Requsted path not found, returning 404 error")
             http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
-        
-        # Send the response back
-        client_connection.sendall(http_response.encode())
- 
+    
     except Exception as e:
-        print(f"Throwing my hands in the air - an error occurred: {e}")
-        
+        print(f'Throwing my hands in the air - an error occurred: {e}')
+        http_response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n"
+        client_connection.sendall(http_response.encode())
+
     finally:
         # Close the connection socket
         print("Closing the client connection and going to bed")
