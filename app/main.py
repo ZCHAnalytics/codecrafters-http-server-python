@@ -16,14 +16,14 @@ def main():
             print(f'{agent}\n')
             
             print('Starting "If" block')
-            if 'echo' in path:
+            if path.startswith("/echo/"):
                 random_string = path.split("/")[-1]
                 print(f'Extracted random string from path: {random_string}')
                 http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
             elif path == "/":
                 print(f'No specific path provided, so returning the default respose')
                 http_response = "HTTP/1.1 200 OK\r\n\r\n"
-            elif agent:
+            elif path.startswith("user-agent"):
                 print(f'Value of User-Agent extracted and is: {agent}\n')
                 http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(agent)}\r\n\r\n{agent}'
             else:
