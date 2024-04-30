@@ -32,10 +32,10 @@ def main():
             else:
                 print("User-Agent header not found in the request\n")
 
-            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}').encode('utf-8')
+            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_length}\r\n\r\n{content}')
             # Send the response back
             print('Sending the response back and putting the kettle on')
-            client_connection.send(http_response.encode())
+            client_connection.send(http_response.encode('utf-8'))
 
         except Exception as e:
             print(f'Throwing my hands in the air - an error occurred: {e}')
