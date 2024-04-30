@@ -20,23 +20,19 @@ def main():
             
             # Extract user-agent line
             print('    extracting the last line of http request')
-            user_agent_line = request_lines[2] if len(request_lines) >= 3 else None
+            full_content = request_lines[2] if len(request_lines) >= 3 else None
             print('     last line with user agent extracted')
            
             print('...  ... ... Starting "If" block\n') 
-            if user_agent_line:
-                print(f'Value of User-Agent extracted and is: {user_agent_line.split(": ")[1]}\n')
+            if full_content:
+                content_value = full_content.split(": ")[1]
+                print(f'Value of User-Agent extracted and is: {content_value}\n')
+                content_value_length = len(content_value)
+                print(f'Value of User-Agent in length is: {content_value_length}\n')
             else:
                 print("User-Agent header not found in the request\n")
 
-            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n')
-            
-            # Extracting value of User-Agent and including it in the response
-            print('     Extracting value of User-Agent\n')
-            user_agent_value = user_agent_line.split(": ")[1] if user_agent_line else "Unknown"
-
-            http_response += f"Content-Length: {len(user_agent_value)}\r\n\r\n{user_agent_value}"
-                     
+            http_response = (f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {content_value_length}\r\n\r\n{content_value}')
             # Send the response back
             print('Sending the response back and putting the kettle on')
             client_connection.send(http_response.encode())
