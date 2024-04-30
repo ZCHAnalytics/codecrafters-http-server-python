@@ -1,58 +1,46 @@
 import socket
 
 def main():
-    print("Logs from your program will appear here!")
     my_serv_socket = socket.create_server(("localhost", 4221), reuse_port=True)
 
+    print('...  Starting the "while True" block...')
     while True:
+        client_connection, client_address = my_serv_socket.accept()
+        print(f'Accepting the connection from client at this address {client_address}')
+
+        print('...  ... Starting the "try" block inside the "while" block')    
         try:
-            client_connect, client_address = my_serv_socket.accept()
-            print(f"The connection from {client_address}")
-            
-            # Read data from the connection        
-            client_request_data = client_connect.recv(1024).decode()
-            print(f"Received request: {client_request_data}")
+            # Read data from the connection
+            client_request_data = client_connection.recv(1024).decode()
+            print(f'Decoded request received from client: {client_request_data}')
 
-            # Extract the path from the request
-            http_request_data = client_request_data.split("\r\n")
-            first_line = http_request_data[0]
-            _, path, _ = first_line.split(" ")
-            
-            print(f"The extracted path is: {path}")
+            # Extract path from the request
+            _, path, _ = client_request_data.split(" ", 2)
+            print(f'Extracted path from the request: {path}')
 
-            # Conditional
+            print('...  ... ... Starting "If" block')
             if path.startswith("/echo/"):
-                # Extract the random string from the path
-                _, _, random_string = path.partition('/echo/')
-                print(f'The random string in the extracted path is: {random_string}')
-
-                # Create a response body
-                print("this is the outcome of response_body=random_string")
-                response_body = random_string
-
-                # Construct the response
-                http_response = (
-                    f'HTTP/1.1 200 OK\r\n'
-                    f'Content-Type: text/plain\r\n'
-                    f'Content-Length: {len(response_body)}\r\n'
-                    f'\r\n'
-                    f'{response_body}'
-                )
+                random_string = path.split("/")[-1]
+                print(f'Extracted random string from path: {random_string}')
+                http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
             elif path == "/":
-                # The \r\n\r\n at the end of the response is required to indicate the end of the HTTP headers according to the HTTP protocol.
+                print(f'No specific path provided, so returning the default respose')
                 http_response = "HTTP/1.1 200 OK\r\n\r\n"
             else:
-                # Respond with 404 Not Found for other paths
-                print("this is the outcome of else operation")
+                print(f'Requsted path not found, returning 404 error')
                 http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
 
-            # Send the response
-            client_conn.send(http_response.encode())    
-            # Close the connection socket
-            client_conn.close()
+            # Send the response back
+            print("Sending the response back and putting the kettle on")
+            client_connection.send(http_response.encode())
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f'Throwing my hands in the air - an error occurred: {e}')
+
+        finally:
+            # Close the connection socket
+            print("Closing the client connection and going to bed")
+            client_connection.close()
 
 if __name__ == "__main__":
     main()
