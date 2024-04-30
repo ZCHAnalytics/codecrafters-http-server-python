@@ -21,10 +21,10 @@ def main():
                 print(f'If the path has echo that the random string in the extracted path is: {random_string}')
                 http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
             elif path == "/":
-                print(f'If the path only has forward slash and now echom then the random string in the extracted path is: {random_string}')
+                print(f'If the path does not starts with 'echo' than the random string in the extracted path is: {random_string}')
                 http_response = "HTTP/1.1 200 OK\r\n\r\n"
             else:
-                print(f'If the path has no echo or string, that it is an ultimate failure and the random string in the extracted path is still is: {random_string}')
+                print(f'Any other response')
                 http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
 
             # Send the response back
