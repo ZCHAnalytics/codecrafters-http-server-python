@@ -8,27 +8,24 @@ def main():
             client_request_data = client_connection.recv(1024).decode()
             print(f'Decoded request received from client: {client_request_data}\n\n') ##
 
-            # Split http request into separate lines 
-            print('Let us splitting http request lines into separate lines!')
-            request_lines = client_request_data.split("\r\n")
-            print(f'Http request lines split as: {request_lines}\n')
-            
             # Extract the path from the request
-            first_line = request_lines[0]
-            _, path, _ = first_line.split(" ")
+            path = client_request_data.split('\r\n')[0].split(" ")[1]
             print(f'{path}\n')
+            
+            agent = client_request_data.split('\r\n')[2].split(": ")[1]
+            print(f'{agent}\n')
+            
             print('Starting "If" block')
             if 'echo' in path:
                 random_string = path.split("/")[-1]
                 print(f'Extracted random string from path: {random_string}')
                 http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
-            elif 'User-Agent' in request_lines[2]:
-                content = request_lines[2].split(": ")[1]
-                print(f'Value of User-Agent extracted and is: {content}\n')
-                http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(content)}\r\n\r\n{content}'
             elif path == "/":
                 print(f'No specific path provided, so returning the default respose')
                 http_response = "HTTP/1.1 200 OK\r\n\r\n"
+            elif agent:
+                print(f'Value of User-Agent extracted and is: {agent}\n')
+                http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(agent)}\r\n\r\n{agent}'
             else:
                 print(f'Requsted path not found, returning 404 error')
                 http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
