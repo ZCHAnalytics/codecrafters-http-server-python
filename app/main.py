@@ -34,7 +34,7 @@ def parsing_requests(client_connection):
             if os.path.exists(file_path) and os.path.isfile(file_path):
                 with open(file_path, "rb") as file:
                     file_content = file.read()
-                http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\n\r\n{file_content.decode()}"
+                http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content.decode()}"
                 client_connection.sendall(http_response.encode())
         else:
             print(f"Requsted path not found, returning 404 error")
