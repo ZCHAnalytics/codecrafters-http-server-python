@@ -21,7 +21,6 @@ def main():
             # Extract path from the request
             _, path, _ = client_request_data.split(" ", 2) 
             print(f'Extracted path from the request: {path}\n')
-            
 
             print('...  ... ... Starting "If" block')
             if path == '/':
@@ -44,8 +43,6 @@ def main():
             else:
                 print(f'Requsted path not found, returning 404 error')
                 http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
-            else:
-                print("User-Agent header not found in the request\n")
 
             # Send the response back
             print('Sending the response back and putting the kettle on')
