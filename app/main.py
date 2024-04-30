@@ -8,13 +8,15 @@ def parsing_requests(client_connection, directory):
         request_lines = request_data.split("\r\n")
         path = request_lines[0].split(" ")[1]
         print(path)
-    
-        if len(request_lines) >= 3:
-            agent = request_lines[2].split(": ")[1]
-            print(agent)
-        else:
-            print("Request data does not contain enough lines")
-    
+        try: 
+            if len(request_lines) >= 3:
+                agent = request_lines[2].split(": ")[1]
+                print(agent)
+            else:
+                print("Request data does not contain enough lines")
+        except Exception as e:
+            print(f"exception: {e}")
+        
         if path.startswith("/echo/"):
             _, _, random_string = path.partition("/echo/")
             print(f"Extracted random string from path: {random_string}")
@@ -43,6 +45,7 @@ def parsing_requests(client_connection, directory):
  
     except Exception as e:
         print(f"Throwing my hands in the air - an error occurred: {e}")
+        
     finally:
         # Close the connection socket
         print("Closing the client connection and going to bed")
