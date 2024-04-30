@@ -7,17 +7,19 @@ def main():
         client_connection, client_address = my_serv_socket.accept()
         print(f'Accepting the connection from client at this address {client_address}\n')
 
+
+
         print('...  ... Starting the "try" block inside the "while" block\n')    
         try:
             # Read data from the connection
             client_request_data = client_connection.recv(1024).decode()
             print(f'Decoded request received from client: {client_request_data}')
 
-            # Extract third line from the request
+            # Split request into lines 
             http_request_lines = client_request_data.split("\r\n")
             print(f'Extracting User Agent from the http request lines: {http_request_lines}')
 
-            _, user_agent_line = http_request_lines[-1].split(" ")
+            user_agent_line = http_request_lines[2]
             print('    extracting the last line of http request')
             print('...  ... ... Starting "If" block\n')
             if  user_agent_line:
