@@ -1,12 +1,11 @@
 import socket
 
 def main():
-    my_serv_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+    server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     while True:
-        client_connection, client_address = my_serv_socket.accept()
+        client_connection, client_address = server_socket.accept()
         try:
             request_data = client_connection.recv(1024).decode()
-            # Extract the path from the request
             path = request_data.split("\r\n")[0].split(" ")[1]
             print(f'{path}\n')
             
@@ -14,10 +13,11 @@ def main():
             print(f'{agent}\n')
             
             print('Starting "If" block')
-            if path.startswith("/echo/"):
-                random_string = path.split("/")[-1]
-                print(f'Extracted random string from path: {random_string}')
-                http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
+            if path.startswith("/"):
+                if len(path) > 1:
+                    random_string = path.split("/")[-1]
+                    print(f'Extracted random string from path: {random_string}')
+                    http_response = f'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(random_string)}\r\n\r\n{random_string}'
             elif path == "/":
                 print(f'No specific path provided, so returning the default respose')
                 http_response = "HTTP/1.1 200 OK\r\n\r\n"
