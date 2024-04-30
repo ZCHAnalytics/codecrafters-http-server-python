@@ -2,30 +2,31 @@ import socket
 
 def main():
     print("Logs from your program will appear here!")
-    serv_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+    my_serv_socket = socket.create_server(("localhost", 4221), reuse_port=True)
 
     while True:
         try:
-            client_conn, client_addr = serv_socket.accept()
+            client_conn, client_addr = my_serv_socket.accept()
             print(f"The connection from {client_addr}")
 
             # Read data from the connection
-            client_request_data = client_conn.recv(1024).decode()
-            print(f"The received request: {client_request_data}")
+            read_client_data = client_conn.recv(1024).decode()
+            print(f"The received request: {read_client_data}")
             
             # Extract path from the request
-            request_lines = client_request_data.split('\r\n')
-            start_line = request_lines[0]
+            client_request_lines = read_client_data.split('\r\n')
+            start_line = client_request_lines[0]
             _, path, _ = start_line.split(' ')
-            print(f"The requested path: {path}")
+            print(f"The requested path is: {path}")
 
-            # Check if the path starts with '/echo/'
-            if path.startswith('/echo/'):
+            # Check if the path starts with '/'
+            if path.startswith('/'):
                 # Extract the random string from the path
                 _, _, random_string = path.split('/')
                 print(f'The random string: {random_string}')
 
                 # Create a response body
+                print("this is the outcome of response_body=random_string")
                 response_body = random_string
 
                 # Construct the response
@@ -38,7 +39,8 @@ def main():
                 )
             else:
                 # Respond with 404 Not Found for other paths
-                response = "Error - HTTP/1.1 404 Not Found\r\n\r\n"
+                print("this is the outcome of else operation")
+                response = "HTTP/1.1 404 Not Found\r\n\r\n"
    
             # Send the response
             client_conn.send(response.encode())    
