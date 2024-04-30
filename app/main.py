@@ -17,14 +17,15 @@ def main():
 
             # Split request into lines 
             http_request_lines = client_request_data.split("\r\n")
-            print(f'Extracting User Agent from the http request lines: {http_request_lines}')
+            print(f'Splitting http request lines into lines: {http_request_lines}')
 
             user_agent_line = http_request_lines[2].split(" ")
+            user_agent = user_agent_line[-1]
             print('    extracting the last line of http request')
             print('...  ... ... Starting "If" block\n')
             if  user_agent_line:
                 print(f'           Preparing curl http response')
-                http_response = (f'HTTP/1.1 200 OK\r\nContent_type: text/plain\r\nContent-Length: len({user_agent_line})\r\n\r\n{user_agent_line}')
+                http_response = (f'HTTP/1.1 200 OK\r\nContent_type: text/plain\r\nContent-Length: len({user_agent})\r\n\r\n{user_agent}')
             else:
                 print(f'Requsted path not found, returning 404 error')
                 http_response = 'HTTP/1.1 404 Not Found\r\n\r\n'
