@@ -35,13 +35,14 @@ def parsing_requests(client_connection, directory):
                 print(f' the content of the file:{file_name}')
                 with open(file_path, "rb") as file:
                     file_content = file.read()
-                http_response = f'HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n{file_content.decode()}'
+                http_response = f"HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(file_content)}\r\n\r\n"
+                client_connection.sendall(http_response.encode() + file_content)
         else:
             print(f"Requsted path not found, returning 404 error")
             http_response = "HTTP/1.1 404 Not Found\r\n\r\n"
     
     except Exception as e:
-        print(f'Throwing my hands in the air - an error occurred: {e}')
+        print(f"Throwing my hands in the air - an error occurred: {e}")
         http_response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n"
         client_connection.sendall(http_response.encode())
 
