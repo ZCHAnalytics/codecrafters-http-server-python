@@ -1,12 +1,14 @@
 import socket
 import threading
 import os
-import sys
+import argparse
 
 # 1. The main function that delegates to the handle_client function
 def main(directory):
-    #http_response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n"
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--directory", type=str, default=None)
+    args = parser.parse_args()
     while True:
         client_connection, client_address = server_socket.accept()
         client_thread = threading.Thread(target=handle_client, args=(client_connection, directory))
@@ -73,19 +75,16 @@ def extract_agent(agent_line):
     return build_response(200, 'OK', 'text/plain', response_body)
 
 # 1.1.3. Content retrieval helper function
-def read_file_content(path):
-    print("Running get_file_content function")
-    file_name = path[7:]
-    print(file_name)
+def read_file_content(path, file_name):
     with open(file_name, "r") as f:
         file_content = f.read()
     return build_response(200, "OK", "application/octet-stream", file_content)
 
 # 1.1.4/ Write file content
-def write_file_contents(path, content):
-    file_name = path[7:]
+def write_file_contents(path, file_name):
     with open(file_name, "w") as file:
-        file.write(content)
+        file_content = file.write()
+    return build_response(201, "OK", "application/octet-stream", file_content)
 
 # 1.2. Function called by any of the three helper functions
 def build_response(status_code, reason_phrase, content_type=None, body=None):
@@ -102,9 +101,3 @@ def build_response(status_code, reason_phrase, content_type=None, body=None):
     return response
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[1] != "--directory":
-        print("Usage: python server.py --directory <directory>")
-        sys.exit(1)
-
-    directory = sys.argv[2]
-    main(directory)
