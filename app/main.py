@@ -13,53 +13,37 @@ def main(directory):
         client_thread.start()
         
 # 1.1. Function that takes over from the main function and delegates to the helper functions
-def handle_client(client_connection, directory):
+def handle_client(client_connection):
     try:
         request_data = client_connection.recv(1024).decode()
         request_lines = request_data.split("\r\n")
         method, path, _ = request_lines[0].split(" ", 2)
-        print(f"Method is {method} and path is {path}")
 
-        if path.startswith("/files/"):
-            if method == "POST":
-                filename = os.path.basename(path)
-                file_path = os.path.join(directory, filename)  # Construct the file path using the provided directory
-                print(f"File name is {filename} and file path is {file_path}")
-                # Read the request body to obtain file contents
-                content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
-                request_body = "".join(request_lines[-1])
-                file_content = request_body.encode()[:content_length]
-                # Write file contents to the specified directory
-                with open(file_path, "wb") as file:
-                    file.write(file_content)
-                # Respond to the client with status code 201
-                response = build_response(201, "Created", None, None)
-            elif method == "GET":
-                print("Method is GET")
-                response = get_file_content(path, directory)  # calling file helper function
-                print(response)
-            else:
-                print("Method is not provided")
-                response = build_response(404, "Not Found", None, None)
-            
-        elif path.startswith("/user-agent") and len(request_lines) >= 3:
-            print("Path starts with user-agent")
-            agent_line = request_lines[2]
-            print("agent_line requested")
-            response = extract_agent(agent_line) # calling agent helper function
-            print(response)
-
-        elif path.startswith("/echo/"):
-            print("Path starts with echo")
+        if path.startswith("/echo/"):
             _, _, random_string = path.partition("/echo/")
-            print(random_string)
             response = extract_string(random_string) # calling string helper function
-            print(response)
 
         elif path == "/":
-            print("The outcome of handle_client function is an empty path")
             response = build_response(200, "OK", None, None)
         
+        elif path.startswith("/user-agent") and len(request_lines) >= 3:
+            agent_line = request_lines[2]
+            response = extract_agent(agent_line) # calling agent helper function
+
+        elif path.startswith("/files/"):
+            file_name = path[7: ]
+                      
+            if method == "GET":
+                if os.path.exists(os.path.join(directory, file_name)):
+                    body = read_file_content(os.path.join(directory, file_name))
+                    response = build_response(200, "OK", "application/octet-stream", body)
+                else:
+                    response = build_response(404, "Not Found", None, None)
+            if method == "POST":
+                request_lines = request_data.split("\r\n")[6]
+                body = write_file_contents(os.path.join(directory, file_name), request_lines)    
+                response = build_response(201, "Created", None, request_lines)
+                    
         elif 'response' not in locals():
             response = build_response(500, "Internal Server Error", None, None)
         else:
@@ -89,19 +73,19 @@ def extract_agent(agent_line):
     return build_response(200, 'OK', 'text/plain', response_body)
 
 # 1.1.3. Content retrieval helper function
-def get_file_content(path, directory):
+def read_file_content(path):
     print("Running get_file_content function")
     file_name = path[7:]
     print(file_name)
-    path = os.path.join(directory, file_name)   
-    if os.path.exists(path) and os.path.isfile(path):
-        print("Both path and file exist")
-        with open(path, "r") as file:
-            file_content = file.read()
-        return build_response(200, "OK", "application/octet-stream", file_content)
-    else:
-        print("Both path and file do not exist")
-        return build_response(404, "Not Found", None, None)
+    with open(file_name, "r") as f:
+        file_content = f.read()
+    return build_response(200, "OK", "application/octet-stream", file_content)
+
+# 1.1.4/ Write file content
+def write_file_contents(path, content):
+    file_name = path[7:]
+    with open(file_name, "w") as file:
+        file.write(content)
 
 # 1.2. Function called by any of the three helper functions
 def build_response(status_code, reason_phrase, content_type=None, body=None):
