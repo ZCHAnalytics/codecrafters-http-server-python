@@ -63,7 +63,7 @@ def get_file_content(path):
     if os.path.exists(file_path) and os.path.isfile(file_path):
         with open(file_path, "r") as file:
             file_content = file.read()
-        return build_response(200, "OK", '', file_content)
+        return build_response(200, "OK", 'text/plan', file_content)
     else:
         return build_response(404, "Not Found when trying to get file content")
 
