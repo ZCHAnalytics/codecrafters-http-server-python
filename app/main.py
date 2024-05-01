@@ -15,7 +15,7 @@ def main(directory):
         client_thread.start()
         
 # 1.1. Function that takes over from the main function and delegates to the helper functions
-def handle_client(client_connection):
+def handle_client(client_connection, directory):
     try:
         request_data = client_connection.recv(1024).decode()
         request_lines = request_data.split("\r\n")
@@ -101,3 +101,4 @@ def build_response(status_code, reason_phrase, content_type=None, body=None):
     return response
 
 if __name__ == "__main__":
+    main()
