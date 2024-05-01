@@ -24,7 +24,6 @@ def handle_client(client_connection, directory):
             if method == "POST":
                 filename = os.path.basename(path)
                 file_path = os.path.join(directory, filename)
-                print(f"File name is {filename} and file path is {file_path}")
                 #  Read the request body to obtain file contents
                 content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
                 request_body = "".join(request_lines[-1])
@@ -36,8 +35,8 @@ def handle_client(client_connection, directory):
                 response = build_response(201, "Created", None, None)
             elif method == "GET":
                 print("Method is GET")
-                response_content = get_file_content(path, directory) # calling file helper function
-                print(response_content)
+                response = get_file_content(path, directory) # calling file helper function
+                print(response)
             else:
                 print("Method is not provided")
                 response = build_response(404, "Not Found", None, None)
@@ -46,25 +45,25 @@ def handle_client(client_connection, directory):
             print("Path starts with user-agent")
             agent_line = request_lines[2]
             print("agent_line requested")
-            response_content = extract_agent(agent_line) # calling agent helper function
-            print(response_content)
+            response = extract_agent(agent_line) # calling agent helper function
+            print(response)
 
         elif path.startswith("/echo/"):
             print("Path starts with echo")
             _, _, random_string = path.partition("/echo/")
             print(random_string)
-            response_content = extract_string(random_string) # calling string helper function
-            print(response_content)
+            response = extract_string(random_string) # calling string helper function
+            print(response)
 
         elif path == "/":
             print("The outcome of handle_client function is an empty path")
-            response_content = build_response(200, "OK", None, None)
+            response = build_response(200, "OK", None, None)
         
         if 'response' not in locals():
             response = build_response(500, "Internal Server Error", None, None)
         else:
             print("there is not path")
-            response_content = build_response(404, 'Not Found', None, None)
+            response = build_response(404, 'Not Found', None, None)
 
     except Exception as e:
         print(f"Error handling client request: {e}")
