@@ -88,17 +88,16 @@ def extract_agent(agent_line):
     return build_response(200, 'OK', 'text/plain', response_body)
 
 # 1.1.3. Content retrieval helper function
-def get_file_content(path):
+def get_file_content(path, directory):
     print("Running get_file_content function")
-    print(path)
     file_name = path[7:]
     print(file_name)
-       
+    path = os.path.join(directory, file_name)   
     if os.path.exists(path) and os.path.isfile(path):
         print("Both path and file exist")
         with open(path, "r") as file:
             file_content = file.read()
-        return build_response(200, "OK", 'application/octet-stream', file_content)
+        return build_response(200, "OK", "application/octet-stream", file_content)
     else:
         print("Both path and file do not exist")
         return build_response(404, "Not Found", None, None)
