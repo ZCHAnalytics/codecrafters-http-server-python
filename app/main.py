@@ -22,14 +22,14 @@ def handle_client(client_connection, directory):
 
         if path.startswith("/files/"):
             if method == "POST":
-                filename = os.path.basename(path)
-                file_path = os.path.join(directory, filename)
+                #filename = os.path.basename(path)
+                # file_path = os.path.join(directory, filename)
                 #  Read the request body to obtain file contents
                 content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
                 request_body = "".join(request_lines[-1])
                 file_content = request_body.encode()[:content_length]
                 # Write file contents to the specified directory
-                with open(file_path, "wb") as file:
+                with open(path, "wb") as file:
                     file.write(file_content)
                 # Respond to the client with status code 201
                 response = build_response(201, "Created", None, None)
