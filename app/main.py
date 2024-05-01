@@ -19,23 +19,38 @@ def handle_client(client_connection, directory):
         path = request_lines[0].split(" ")[1]
         method = request_lines[0].split(" ")[0]
         print(method, path)
-        if method == "POST" and path.startswith("/files/"):
-            filename = os.path.basename(path)
-            file_path = os.path.join(directory, filename)
-
-            # Read the request body to obtain file contents
-            content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
-            request_body = "".join(request_lines[-1])
-            file_content = request_body.encode()[:content_length]
-
-            # Write file contents to the specified directory
-            with open(file_path, "wb") as file:
-                file.write(file_content)
-
-            # Respond to the client with status code 201
-            response = build_response(201, "Created", None, None)
+        if path.startswith("/files/"):
+            if method == "POST":
+                filename = os.path.basename(path)
+                file_path = os.path.join(directory, filename)
+                #  Read the request body to obtain file contents
+                content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
+                request_body = "".join(request_lines[-1])
+                file_content = request_body.encode()[:content_length]
+                # Write file contents to the specified directory
+                with open(file_path, "wb") as file:
+                    file.write(file_content)
+                # Respond to the client with status code 201
+                response = build_response(201, "Created", None, None)
+            elif method == "GET":
+                response_content = get_file_content(path) # calling file helper function
+                print(response_content)
+            else:
+                response = build_response(404, "Not Found", None, None)
+        
+        elif path.startswith("/user-agent") and len(request_lines) >= 3:
+            agent_line = request_lines[2]
+            response_content = extract_agent(agent_line) # calling agent helper function
+            print(response_content)
+        elif path.startswith("/echo/"):
+            _, _, random_string = path.partition("/echo/")
+            response_content = extract_string(random_string) # calling string helper function
+            print(response_content)
+        elif path == "/":
+            print("The outcome of handle_client function is an empty path")
+            response_content = build_response(200, "OK", None, None)
         else:
-            response = build_response(404, "Not Found", None, None)
+            response_content = build_response(404, 'Not Found', None, None)
 
     except Exception as e:
         print(f"Error handling client request: {e}")
