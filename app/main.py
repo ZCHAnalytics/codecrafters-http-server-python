@@ -70,7 +70,7 @@ def handle_client(client_connection, directory):
     
     finally:
         print("Sending response")
-        client_connection.sendall(response)
+        client_connection.sendall(response.encode())
         print("Closing the connection")
         client_connection.close()
 
@@ -92,11 +92,10 @@ def get_file_content(path, directory):
     print("Running get_file_content function")
     file_name = path[7:]
     print(file_name)
-    
     path = os.path.join(directory, file_name)   
     if os.path.exists(path) and os.path.isfile(path):
         print("Both path and file exist")
-        with open(path, "r") as file:
+        with open(path, "rb") as file:
             file_content = file.read()
         return build_response(200, "OK", "application/octet-stream", file_content)
     else:
