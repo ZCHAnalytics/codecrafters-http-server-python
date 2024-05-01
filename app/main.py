@@ -95,7 +95,7 @@ def get_file_content(path, directory):
     path = os.path.join(directory, file_name)   
     if os.path.exists(path) and os.path.isfile(path):
         print("Both path and file exist")
-        with open(path, "rb") as file:
+        with open(path, "r") as file:
             file_content = file.read()
         return build_response(200, "OK", "application/octet-stream", file_content)
     else:
