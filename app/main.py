@@ -36,7 +36,7 @@ def handle_client(client_connection, directory):
                 
                 if method == "GET":
                     if os.path.exists(os.path.join(directory, file_name)):
-                        with open(os.path.join(directory, file_name), "rb") as f:
+                        with open(os.path.join(directory, file_name), "r") as f:
                             body = f.read()
                         response = build_response(200, "OK", "application/octet-stream", body)
                     else:
