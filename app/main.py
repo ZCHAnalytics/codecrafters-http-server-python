@@ -69,9 +69,9 @@ def get_file_content(path):
 
 # 1.2. Function called by any of the three helper functions if ....
 def build_response(status_code, reason_phrase, body=None):
-    response = f"HTTP/1.1 {status_code}{reason_phrase}\r\nContent-Type: text/plain\r\n"
+    response = f"HTTP/1.1 {status_code} {reason_phrase}\r\nContent-Type: text/plain\r\n"
     if body:
-        response += f"Content-Length: {len(body)}\r\n\r\n{body}\r\n\"
+        response += f"Content-Length: {len(body)}\r\n\r\n{body}\r\n"
     else:
         response += '\r\n'
     return response
