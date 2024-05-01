@@ -90,11 +90,11 @@ def get_file_content(path):
     print("Running get_file_content function")
     file_name = path[7:]
     print(file_name)
-    file_path = f"{sys.argv[2]}/{file_name}"
-    print(file_path)
-    if os.path.exists(file_path) and os.path.isfile(file_path):
+    get_file_path = f"/files/{file_name}"
+    print(get_file_path)
+    if os.path.exists(get_file_path) and os.path.isfile(get_file_path):
         print("Both path and file exist")
-        with open(file_path, "r") as file:
+        with open(get_file_path, "r") as file:
             file_content = file.read()
         return build_response(200, "OK", 'application/octet-stream', file_content)
     else:
