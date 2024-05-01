@@ -33,8 +33,8 @@ def handle_client(client_connection):
             print(response_content)
 
         elif path == "/":
-            response_content = ""
-            print(f" The outcome of handle_client function with empty path: {response_content}")
+            return build_response(200, 'OK', None, None)
+            print("The outcome of handle_client function is an empty path")
         else:
            response_content = None 
            return build_response(404, "Not Found")
