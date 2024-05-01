@@ -16,8 +16,10 @@ def handle_client(client_connection, directory):
     try:
         request_data = client_connection.recv(1024).decode()
         request_lines = request_data.split("\r\n")
-        method, path, _ = request_lines[0].split(" ")
+        path = request_lines[0].split(" ")[1]
         print(path)
+        method = request_lines[0].split(" ")[0]
+        print(method)
         if method == "POST" and path.startswith("/files/"):
             filename = os.path.basename(path)
             file_path = os.path.join(directory, filename)
