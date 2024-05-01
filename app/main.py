@@ -22,15 +22,18 @@ def handle_client(client_connection):
             agent = request_lines[2].split(": ")[1] if len(request_lines) >= 3 else "Unknown"
             response_content = extract_agent(agent) # calling agent helper function
             print(response_content)
+
         elif path.startswith("/echo/"):
             _, _, random_string = path.partition("/echo/")
             response_content = extract_string(random_string) # calling string helper function
             print(response_content)
+
         elif path.startswith("/files/"):
-            response_content = extract_file(path) # calling file helper function
+            response_content = get_file_content(path) # calling file helper function
             print(response_content)
+
         elif path == "/":
-            response_content = " "
+            response_content = ""
             print(f" The outcome of handle_client function with empty path: {response_content}")
         else:
            response_content = None 
@@ -38,7 +41,7 @@ def handle_client(client_connection):
 
     except Exception as e:
         print(f"Error handling client request: {e}")
-        return build_response(500, "Internal Error")
+        return build_response(500, "Internal Server Error")
     finally:
         client_connection.sendall(response_content.encode())
         client_connection.close()
@@ -59,7 +62,7 @@ def get_file_content(path):
     if os.path.exists(file_path) and os.path.isfile(file_path):
         with open(file_path, "r") as file:
             file_content = file.read()
-        return build_response(200, "OK", file_content.decode())
+        return build_response(200, "OK", file_content)
     else:
         return build_response(404, "Not Found when trying to get file content")
 
