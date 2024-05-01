@@ -3,18 +3,15 @@ import threading
 import os
 import sys
 
-http_response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n"
-
 def main():
-    global http_response
+    http_response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n"
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     while True:
         client_connection, client_address = server_socket.accept()
-        client_thread = threading.Thread(args=(client_connection,))
+        client_thread = threading.Thread(target=handle_client, args=(client_connection, http_response))
         client_thread.start()
 
-def handle_client(client_connection):
-    global http_response
+def handle_client(client_connection, default_response):
     try:
         request_data = client_connection.recv(1024).decode()
         request_lines = request_data.split("\r\n")
@@ -29,13 +26,16 @@ def handle_client(client_connection):
         elif path.startswith("/files/"):
             http_response = extract_file(path)
         elif path == "/":
-            http_response
+            http_response = default_response
         else:
             http_response = default_response
+
     except Exception as e:
         print(f"Error handling client request: {e}")
-        client_connection.sendall(http_response.encode())
+        http_response = default_response
+
     finally:
+        client_connection.sendall(http_response.encode())
         client_connection.close()
 
 def extract_agent(agent):
