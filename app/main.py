@@ -22,24 +22,26 @@ def handle_client(client_connection, directory):
 
         if path.startswith("/files/"):
             if method == "POST":
-                #  Read the request body to obtain file contents
+                filename = os.path.basename(path)
+                file_path = os.path.join(directory, filename)  # Construct the file path using the provided directory
+                print(f"File name is {filename} and file path is {file_path}")
+                # Read the request body to obtain file contents
                 content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
                 request_body = "".join(request_lines[-1])
                 file_content = request_body.encode()[:content_length]
                 # Write file contents to the specified directory
-                with open(path, "wb") as file:
+                with open(file_path, "wb") as file:
                     file.write(file_content)
                 # Respond to the client with status code 201
                 response = build_response(201, "Created", None, None)
             elif method == "GET":
                 print("Method is GET")
-                response = get_file_content(path, directory) # calling file helper function
+                response = get_file_content(path, directory)  # calling file helper function
                 print(response)
             else:
                 print("Method is not provided")
                 response = build_response(404, "Not Found", None, None)
-            return response
-               
+            
         elif path.startswith("/user-agent") and len(request_lines) >= 3:
             print("Path starts with user-agent")
             agent_line = request_lines[2]
