@@ -25,7 +25,7 @@ def handle_client(client_connection, directory):
                 response = extract_info(random_string, 'text/plain', random_string)
 
             elif path == "/":
-                response = build_response(200, "OK", content_type="text/html", body="<h1>Welcome to the server!</h1>")
+                response = build_response(200, "OK")
 
             elif path.startswith("/user-agent") and len(request_lines) >= 3:
                 agent_line = request_lines[2]
@@ -67,8 +67,8 @@ def handle_client(client_connection, directory):
 def extract_info(info, content_type, response_body):
     return build_response(200, 'OK', content_type, response_body)
 
-def build_response(status_code, reason_phrase, content_type=None, body=None):
-    response = f"HTTP/1.1 {status_code} {reason_phrase}\r\n"
+def build_response(status_code, status_phrase, content_type=None, body=None):
+    response = f"HTTP/1.1 {status_code} {status_phrase}\r\n"
     if content_type:
         response += f"Content-Type: {content_type}\r\n"
     if body:
