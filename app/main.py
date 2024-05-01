@@ -101,7 +101,7 @@ def get_file_content(path):
         return build_response(200, "OK", 'application/octet-stream', file_content)
     else:
         print("Both path and file do not exist")
-        return build_response(404, "Not Found when trying to get file content", None, None)
+        return build_response(404, "Not Found", None, None)
 
 # 1.2. Function called by any of the three helper functions
 def build_response(status_code, reason_phrase, content_type=None, body=None):
