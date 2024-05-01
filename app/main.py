@@ -60,7 +60,7 @@ def handle_client(client_connection, directory):
             print("The outcome of handle_client function is an empty path")
             response = build_response(200, "OK", None, None)
         
-        if 'response' not in locals():
+        elif 'response' not in locals():
             response = build_response(500, "Internal Server Error", None, None)
         else:
             print("there is not path")
