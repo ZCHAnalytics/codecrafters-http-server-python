@@ -42,7 +42,6 @@ def handle_client(client_connection):
     finally:
         client_connection.sendall(response_content.encode())
         client_connection.close()
-
 # 1.1.1. string helper function called by handle_client function
 def extract_string(random_string):
     response_body = random_string

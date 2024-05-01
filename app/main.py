@@ -5,29 +5,27 @@ import sys
 
 # 1. The main function that delegates to the handle_client function
 def main(directory):
-    http_response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n"
+    #http_response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n"
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     while True:
         client_connection, client_address = server_socket.accept()
         client_thread = threading.Thread(target=handle_client, args=(client_connection, directory))
         client_thread.start()
+        
 # 1.1. Function that takes over from the main function and delegates to the helper functions
 def handle_client(client_connection, directory):
     try:
         request_data = client_connection.recv(1024).decode()
         request_lines = request_data.split("\r\n")
-        path = request_lines[0].split(" ")[1]
-        method = request_lines[0].split(" ")[0]
-        print(method)
-        print(path)
+        method, path, _ = request_lines[0].split(" ", 2)
+        print(f"Method is {method} and path is {path}")
 
         if path.startswith("/files/"):
             if method == "POST":
                 print("Method starts with POST")
                 filename = os.path.basename(path)
-                print(filename)
                 file_path = os.path.join(directory, filename)
-                print(file_path)
+                print(f"File name is {filename} and file path is {file_path}")
                 #  Read the request body to obtain file contents
                 content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
                 request_body = "".join(request_lines[-1])
@@ -51,15 +49,18 @@ def handle_client(client_connection, directory):
             print("agent_line requested")
             response_content = extract_agent(agent_line) # calling agent helper function
             print(response_content)
+
         elif path.startswith("/echo/"):
             print("Path starts with echo")
             _, _, random_string = path.partition("/echo/")
             print(random_string)
             response_content = extract_string(random_string) # calling string helper function
             print(response_content)
+
         elif path == "/":
             print("The outcome of handle_client function is an empty path")
             response_content = build_response(200, "OK", None, None)
+        
         else:
             print("there is not path")
             response_content = build_response(404, 'Not Found', None, None)
@@ -67,6 +68,7 @@ def handle_client(client_connection, directory):
     except Exception as e:
         print(f"Error handling client request: {e}")
         response = build_response(500, "Internal Server Error", None, None)
+    
     finally:
         print("Sending encoded response")
         client_connection.sendall(response.encode())
@@ -88,20 +90,20 @@ def extract_agent(agent_line):
 # 1.1.3. Content retrieval helper function
 def get_file_content(path):
     print("Running get_file_content function")
+    print(path)
     file_name = path[7:]
     print(file_name)
-    get_file_path = f"/files/{file_name}"
-    print(get_file_path)
-    if os.path.exists(get_file_path) and os.path.isfile(get_file_path):
+       
+    if os.path.exists(path) and os.path.isfile(path):
         print("Both path and file exist")
-        with open(get_file_path, "r") as file:
+        with open(path, "r") as file:
             file_content = file.read()
         return build_response(200, "OK", 'application/octet-stream', file_content)
     else:
         print("Both path and file do not exist")
         return build_response(404, "Not Found when trying to get file content", None, None)
 
-# 1.2. Function called by any of the three helper functions if ....
+# 1.2. Function called by any of the three helper functions
 def build_response(status_code, reason_phrase, content_type=None, body=None):
     print("Running build_response function")
     response = f"HTTP/1.1 {status_code} {reason_phrase}\r\n"
@@ -121,5 +123,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     directory = sys.argv[2]
-    print(directory)
     main(directory)
