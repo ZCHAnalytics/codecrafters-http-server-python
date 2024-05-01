@@ -33,15 +33,14 @@ def handle_client(client_connection):
             print(response_content)
 
         elif path == "/":
-            response_content = build_response(200, 'OK', None, None)
+            response_content = "200, 'OK', None, None"
             print("The outcome of handle_client function is an empty path")
         else:
-           response_content = None 
-           return build_response(404, "Not Found")
+           response_content = "404, 'Not Found', None, None"
 
     except Exception as e:
         print(f"Error handling client request: {e}")
-        return build_response(500, "Internal Server Error")
+        return build_response(500, "Internal Server Error", None, None)
     finally:
         client_connection.sendall(response_content.encode())
         client_connection.close()
@@ -66,7 +65,7 @@ def get_file_content(path):
             file_content = file.read()
         return build_response(200, "OK", 'application/octet-stream', file_content)
     else:
-        return build_response(404, "Not Found when trying to get file content", None)
+        return build_response(404, "Not Found when trying to get file content", None, None)
 
 # 1.2. Function called by any of the three helper functions if ....
 def build_response(status_code, reason_phrase, content_type, body=None):
