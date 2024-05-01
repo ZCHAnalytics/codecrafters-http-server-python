@@ -22,8 +22,6 @@ def handle_client(client_connection, directory):
 
         if path.startswith("/files/"):
             if method == "POST":
-                #filename = os.path.basename(path)
-                # file_path = os.path.join(directory, filename)
                 #  Read the request body to obtain file contents
                 content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
                 request_body = "".join(request_lines[-1])
@@ -40,7 +38,8 @@ def handle_client(client_connection, directory):
             else:
                 print("Method is not provided")
                 response = build_response(404, "Not Found", None, None)
-        
+            return response
+               
         elif path.startswith("/user-agent") and len(request_lines) >= 3:
             print("Path starts with user-agent")
             agent_line = request_lines[2]
