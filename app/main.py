@@ -22,7 +22,6 @@ def handle_client(client_connection, directory):
 
         if path.startswith("/files/"):
             if method == "POST":
-                print("Method starts with POST")
                 filename = os.path.basename(path)
                 file_path = os.path.join(directory, filename)
                 print(f"File name is {filename} and file path is {file_path}")
@@ -37,7 +36,7 @@ def handle_client(client_connection, directory):
                 response = build_response(201, "Created", None, None)
             elif method == "GET":
                 print("Method is GET")
-                response_content = get_file_content(path) # calling file helper function
+                response_content = get_file_content(path, directory) # calling file helper function
                 print(response_content)
             else:
                 print("Method is not provided")
