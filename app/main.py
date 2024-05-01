@@ -17,9 +17,8 @@ def handle_client(client_connection, directory):
         request_data = client_connection.recv(1024).decode()
         request_lines = request_data.split("\r\n")
         path = request_lines[0].split(" ")[1]
-        print(path)
         method = request_lines[0].split(" ")[0]
-        print(method)
+        print(method, path)
         if method == "POST" and path.startswith("/files/"):
             filename = os.path.basename(path)
             file_path = os.path.join(directory, filename)
@@ -58,7 +57,9 @@ def extract_agent(agent_line):
 # 1.1.3. Content retrieval helper function
 def get_file_content(path):
     file_name = path[7:]
+    print(file_name)
     file_path = f"{sys.argv[2]}/{file_name}"
+    print(file_path)
     if os.path.exists(file_path) and os.path.isfile(file_path):
         with open(file_path, "r") as file:
             file_content = file.read()
