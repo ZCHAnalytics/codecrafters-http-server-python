@@ -60,6 +60,8 @@ def handle_client(client_connection, directory):
             print("The outcome of handle_client function is an empty path")
             response_content = build_response(200, "OK", None, None)
         
+        if 'response' not in locals():
+            response = build_response(500, "Internal Server Error", None, None)
         else:
             print("there is not path")
             response_content = build_response(404, 'Not Found', None, None)
@@ -67,7 +69,6 @@ def handle_client(client_connection, directory):
     except Exception as e:
         print(f"Error handling client request: {e}")
         response = build_response(500, "Internal Server Error", None, None)
-    
     finally:
         print("Sending response")
         client_connection.sendall(response.encode())
