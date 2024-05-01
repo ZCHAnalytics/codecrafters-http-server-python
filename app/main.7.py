@@ -18,24 +18,21 @@ def handle_client(client_connection):
         request_lines = request_data.split("\r\n")
         path = request_lines[0].split(" ")[1]
         print(path)
-        if path.startswith("/user-agent") and len(request_lines) >= 3:
+        if path.startswith("/files/"):
+            response_content = get_file_content(path) # calling file helper function
+            print(response_content)
+        
+        elif path.startswith("/user-agent") and len(request_lines) >= 3:
             agent_line = request_lines[2]
             response_content = extract_agent(agent_line) # calling agent helper function
             print(response_content)
-
         elif path.startswith("/echo/"):
             _, _, random_string = path.partition("/echo/")
             response_content = extract_string(random_string) # calling string helper function
             print(response_content)
-
-        elif path.startswith("/files/"):
-            response_content = get_file_content(path) # calling file helper function
-            print(response_content)
-
         elif path == "/":
             print("The outcome of handle_client function is an empty path")
             response_content = build_response(200, "OK", None, None)
-            
         else:
             response_content = build_response(404, 'Not Found', None, None)
 
