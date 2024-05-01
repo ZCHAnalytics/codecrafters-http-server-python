@@ -49,12 +49,12 @@ def handle_client(client_connection):
 # 1.1.1. string helper function called by handle_client function
 def extract_string(random_string):
     response_body = random_string
-    return build_response(f"200, 'OK', 'text/plain', response_body")
+    return build_response(200, 'OK', 'text/plain', response_body)
 
 # 1.1.2. agent helper function called by handle_client function
 def extract_agent(agent):
     response_body = f"User-Agent: {agent}"
-    return build_response(f"200, 'OK', 'application/octet-stream', response_body")
+    return build_response(200, 'OK', 'application/octet-stream', response_body)
 
 # 1.1.3. Content retrieval helper function
 def get_file_content(path):
@@ -63,7 +63,7 @@ def get_file_content(path):
     if os.path.exists(file_path) and os.path.isfile(file_path):
         with open(file_path, "r") as file:
             file_content = file.read()
-        return build_response(200, "OK", file_content)
+        return build_response(200, "OK", '', file_content)
     else:
         return build_response(404, "Not Found when trying to get file content")
 
