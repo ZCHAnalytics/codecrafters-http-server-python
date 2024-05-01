@@ -34,12 +34,10 @@ def handle_client(client_connection):
 
         elif path == "/":
             print("The outcome of handle_client function is an empty path")
-            response_content = None
-            return build_response(200, "OK", None, None)
+            response_content = build_response(200, "OK", None, None)
             
         else:
-            response_content = None
-            return build_response(404, 'Not Found', None, None)
+            response_content = build_response(404, 'Not Found', None, None)
 
     except Exception as e:
         print(f"Error handling client request: {e}")
