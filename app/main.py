@@ -69,10 +69,11 @@ def handle_client(client_connection, directory):
         response = build_response(500, "Internal Server Error", None, None)
     
     finally:
-        print("Sending encoded response")
-        client_connection.sendall(response.encode())
+        print("Sending response")
+        client_connection.sendall(response)
         print("Closing the connection")
         client_connection.close()
+
 # 1.1.1. string helper function called by handle_client function
 def extract_string(random_string):
     print("Running extract_string function")
@@ -91,6 +92,7 @@ def get_file_content(path, directory):
     print("Running get_file_content function")
     file_name = path[7:]
     print(file_name)
+    
     path = os.path.join(directory, file_name)   
     if os.path.exists(path) and os.path.isfile(path):
         print("Both path and file exist")
