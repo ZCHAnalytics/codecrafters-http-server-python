@@ -18,11 +18,16 @@ def handle_client(client_connection, directory):
         request_lines = request_data.split("\r\n")
         path = request_lines[0].split(" ")[1]
         method = request_lines[0].split(" ")[0]
-        print(method, path)
+        print(method)
+        print(path)
+
         if path.startswith("/files/"):
             if method == "POST":
+                print("Method starts with POST")
                 filename = os.path.basename(path)
+                print(filename)
                 file_path = os.path.join(directory, filename)
+                print(file_path)
                 #  Read the request body to obtain file contents
                 content_length = int(next(line.split(": ")[1] for line in request_lines if line.startswith("Content-Length")))
                 request_body = "".join(request_lines[-1])
@@ -33,61 +38,78 @@ def handle_client(client_connection, directory):
                 # Respond to the client with status code 201
                 response = build_response(201, "Created", None, None)
             elif method == "GET":
+                print("Method is GET")
                 response_content = get_file_content(path) # calling file helper function
                 print(response_content)
             else:
+                print("Method is not provided")
                 response = build_response(404, "Not Found", None, None)
         
         elif path.startswith("/user-agent") and len(request_lines) >= 3:
+            print("Path starts with user-agent")
             agent_line = request_lines[2]
+            print("agent_line requested")
             response_content = extract_agent(agent_line) # calling agent helper function
             print(response_content)
         elif path.startswith("/echo/"):
+            print("Path starts with echo")
             _, _, random_string = path.partition("/echo/")
+            print(random_string)
             response_content = extract_string(random_string) # calling string helper function
             print(response_content)
         elif path == "/":
             print("The outcome of handle_client function is an empty path")
             response_content = build_response(200, "OK", None, None)
         else:
+            print("there is not path")
             response_content = build_response(404, 'Not Found', None, None)
 
     except Exception as e:
         print(f"Error handling client request: {e}")
         response = build_response(500, "Internal Server Error", None, None)
     finally:
+        print("Sending encoded response")
         client_connection.sendall(response.encode())
+        print("Closing the connection")
         client_connection.close()
 # 1.1.1. string helper function called by handle_client function
 def extract_string(random_string):
+    print("Running extract_string function")
     response_body = random_string
     return build_response(200, 'OK', 'text/plain', response_body)
 
 # 1.1.2. agent helper function called by handle_client function
 def extract_agent(agent_line):
+    print("Running extract_agent function")
     agent = agent_line.split(": ")[1]
     response_body = agent
     return build_response(200, 'OK', 'text/plain', response_body)
 
 # 1.1.3. Content retrieval helper function
 def get_file_content(path):
+    print("Running get_file_content function")
     file_name = path[7:]
     print(file_name)
     file_path = f"{sys.argv[2]}/{file_name}"
     print(file_path)
     if os.path.exists(file_path) and os.path.isfile(file_path):
+        print("Both path and file exist")
         with open(file_path, "r") as file:
             file_content = file.read()
         return build_response(200, "OK", 'application/octet-stream', file_content)
     else:
+        print("Both path and file do not exist")
         return build_response(404, "Not Found when trying to get file content", None, None)
 
 # 1.2. Function called by any of the three helper functions if ....
 def build_response(status_code, reason_phrase, content_type=None, body=None):
+    print("Running build_response function")
     response = f"HTTP/1.1 {status_code} {reason_phrase}\r\n"
     if content_type:
+        print("There is content-type parameter available")
         response += f"Content-Type: {content_type}\r\n"
     if body:
+       print("There is body parameter available")
        response += f"Content-Length: {len(body)}\r\n\r\n{body}\r\n"
     else:
        response += '\r\n'
@@ -99,4 +121,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     directory = sys.argv[2]
+    print(directory)
     main(directory)
