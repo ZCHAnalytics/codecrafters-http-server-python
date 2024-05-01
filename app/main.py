@@ -31,9 +31,9 @@ def handle_client(client_connection, directory):
                 file.write(file_content)
 
             # Respond to the client with status code 201
-            response = build_response(201, "Created", None, None)
+            response = build_response(201, "Created")
         else:
-            response = build_response(404, "Not Found", None, None)
+            response = build_response(404, "Not Found")
 
     except Exception as e:
         print(f"Error handling client request: {e}")
@@ -48,7 +48,7 @@ def extract_string(random_string):
 
 def extract_agent(agent):
     response_body = f"User-Agent: {agent}"
-    return build_response(200, 'OK', 'text/plain', response_body)
+    return build_response(200, 'OK', 'application/octet-stream', response_body)
 
 def get_file_content(path):
     file_name = path[7:]
@@ -56,9 +56,9 @@ def get_file_content(path):
     if os.path.exists(file_path) and os.path.isfile(file_path):
         with open(file_path, "r") as file:
             file_content = file.read()
-        return build_response(200, "OK", 'application/octet-stream', file_content)
+        return build_response(200, "OK", '', file_content)
     else:
-        return build_response(404, "Not Found when trying to get file content", None, None)
+        return build_response(404, "Not Found when trying to get file content")
 
 def build_response(status_code, reason_phrase, content_type=None, body=None):
     response = f"HTTP/1.1 {status_code} {reason_phrase}\r\n"
